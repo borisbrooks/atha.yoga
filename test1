@@ -1,0 +1,51 @@
+import time
+
+"""URL's"""
+base_url = 'https://atha.yoga/'
+
+"""Chrome run"""
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+s = Service('/Users/borisbrooks/PycharmProjects/pythonProject/chromedriver')
+driver = webdriver.Chrome(service=s)
+driver.get(base_url)
+driver.maximize_window()
+time.sleep(3)
+
+reg_button_click = driver.find_element(By.XPATH, "/html/body/header/nav/div/div[1]/div/a[2]")
+reg_button_click.click()
+time.sleep(5)
+
+driver.close()
+
+"""Firefox run"""
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
+s = Service('/Users/borisbrooks/PycharmProjects/pythonProject/geckodriver')
+driver_firefox = webdriver.Firefox(service=s)
+driver_firefox.get(base_url)
+driver_firefox.maximize_window()
+time.sleep(3)
+
+reg_button_click = driver_firefox.find_element(By.XPATH, "/html/body/header/nav/div/div[1]/div/a[2]")
+reg_button_click.click()
+time.sleep(5)
+
+driver_firefox.close()
+
+"""Edge run"""
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.options import Options
+s = Service('/Users/borisbrooks/PycharmProjects/pythonProject/msedgedriver')
+driver_edge = webdriver.Edge(service=s)
+driver_edge.get(base_url)
+driver_edge.maximize_window()
+time.sleep(3)
+
+reg_button_click = driver_edge.find_element(By.XPATH, "/html/body/header/nav/div/div[1]/div/a[2]")
+reg_button_click.click()
+time.sleep(5)
+
+driver_edge.close()
