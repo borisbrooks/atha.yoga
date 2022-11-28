@@ -1,0 +1,138 @@
+"""Imports"""
+import time
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait as DriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+
+
+"""URL's"""
+base_url = 'https://atha.yoga/'
+email_check = 'https://gmail.com'
+
+"""Test Values"""
+base_email = 'atha.yoga.test@gmail.com'
+base_username = 'Ivan Ivanov'
+base_password = 'pass4cases'
+wrong_email = 'wrongemail@@mail.ru'
+wrong_username = 'иван иванов'
+wrong_password = 'неверныйпароль'
+mail_link_url = 'https://atha.yoga/'
+
+"""Test Email"""
+test_email_login = 'atha.yoga.test'
+test_email_password = 'pass4cases'
+
+"""Paths"""
+chrome_service = ChromeService('/Users/borisbrooks/PycharmProjects/pythonProject/webdrivers/chromedriver')
+firefox_service = FirefoxService('/Users/borisbrooks/PycharmProjects/pythonProject/webdrivers/geckodriver')
+edge_service = EdgeService('/Users/borisbrooks/PycharmProjects/pythonProject/webdrivers/msedgedriver')
+
+"""Classes"""
+class DriversFunctions:
+
+    def __init__(self, driver):
+        self.driver = driver
+        self.wait = DriverWait(self.driver, 10)
+
+    def get_base_url(self):
+        self.driver.get(base_url)
+        self.driver.maximize_window()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/header/nav/div/div[1]/div/a[2]')))
+
+    def reg_button_click(self):
+        self.driver.find_element(By.XPATH, "/html/body/header/nav/div/div[1]/div/a[2]").click()
+
+    def registration_fill(self):
+        username = self.driver.find_element(By.XPATH, '//*[@id="floatingInputName"]')
+        username.send_keys(base_username)
+        email = self.driver.find_element(By.XPATH, '//*[@id="floatingInputEmail"]')
+        email.send_keys(base_email)
+        password = self.driver.find_element(By.XPATH, '//*[@id="floatingPassword"]')
+        password.send_keys(base_password)
+        conf_password = self.driver.find_element(By.XPATH, '//*[@id="floatingPassword2"]')
+        conf_password.send_keys(base_password)
+        click_therms = self.driver.find_element(By.XPATH, '//*[@id="terms"]')
+        click_therms.click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/main/div/div/div/div/div/form/button')))
+
+    def sign_up(self):
+        self.driver.find_element(By.XPATH, '/html/body/div[3]/div/main/div/div/div/div/div/form/button').click()
+
+    def wrong_values(self):
+        incorrect_username = self.driver.find_element(By.XPATH, '//*[@id="floatingInputName"]')
+        incorrect_username.send_keys(wrong_username)
+        incorrect_email = self.driver.find_element(By.XPATH, '//*[@id="floatingInputEmail"]')
+        incorrect_email.send_keys(wrong_email)
+        incorrect_password = self.driver.find_element(By.XPATH, '//*[@id="floatingPassword"]')
+        incorrect_password.send_keys(wrong_password)
+        incorrect_conf_password = self.driver.find_element(By.XPATH, '//*[@id="floatingPassword2"]')
+        incorrect_conf_password.send_keys(wrong_password)
+        self.driver.find_element(By.XPATH, '//*[@id="terms"]').click()
+        time.sleep(2)
+
+    def email_confirm_check(self):
+        self.driver.get(email_check)
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="identifierId"]')))
+        mail_login_input = self.driver.find_element(By.XPATH, '//*[@id="identifierId"]')
+        mail_login_input.send_keys(test_email_login)
+        self.driver.find_element(By.XPATH, '//*[@id="identifierNext"]/div/button/span').click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]/div[1]/div/div[1]/input')))
+        mail_password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]/div[1]/div/div[1]/input')
+        mail_password_input.send_keys(test_email_password)
+        self.driver.find_element(By.XPATH, '//*[@id="passwordNext"]/div/button/span').click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[7]/div[3]/div/div[2]/div[2]/div/div/div/div/div[2]/div/div[1]/div/div[1]/div[8]/div/div[1]/div[2]/div/table/tbody/tr/td[4]/div[2]/span/span')))
+        incoming_letter_check = self.driver.find_element(By.NAME, 'Boris Dimitrov')
+        incoming_letter = self.driver.find_element(By.XPATH, '/html/body/div[7]/div[3]/div/div[2]/div[2]/div/div/div/div/div[2]/div/div[1]/div/div[1]/div[8]/div/div[1]/div[2]/div/table/tbody/tr/td[4]/div[2]/span/span')
+        incoming_letter_check_inside = self.driver.find_element(By.NAME, 'Boris Dimitrov')
+        incoming_letter.click()
+        assert incoming_letter_check == incoming_letter_check_inside
+        print('Incoming Sender is Boris Dimitrov')
+        self.driver.find_element(By.XPATH, '//div[@class="a3s aiL "]/div[2]/div[1]/a').click()
+        last_tab = self.driver.window_handles[-1]
+        self.driver.switch_to.window(last_tab)
+        assert base_url == self.driver.current_url
+        print('URL Correct')
+        self.driver.quit()
+        time.sleep(1)
+
+
+"""Chrome run"""
+driver_chrome = webdriver.Chrome(service=chrome_service)
+test_chrome = DriversFunctions(driver=driver_chrome)
+
+"""Chrome Tests"""
+test_chrome.get_base_url()
+test_chrome.reg_button_click()
+test_chrome.registration_fill()
+test_chrome.sign_up()
+test_chrome.email_confirm_check()
+# test_chrome.wrong_values()
+
+"""Firefox run"""
+driver_firefox = webdriver.Firefox(service=firefox_service)
+test_firefox = DriversFunctions(driver=driver_firefox)
+
+"""Firefox Tests"""
+test_firefox.get_base_url()
+test_firefox.reg_button_click()
+test_firefox.registration_fill()
+test_firefox.sign_up()
+test_firefox.email_confirm_check()
+# test_firefox.wrong_values()
+
+"""Edge run"""
+driver_edge = webdriver.Edge(service=edge_service)
+test_edge = DriversFunctions(driver=driver_edge)
+
+"""Edge Tests"""
+test_edge.get_base_url()
+test_edge.reg_button_click()
+test_edge.registration_fill()
+test_edge.sign_up()
+test_edge.email_confirm_check()
+# test_edge.wrong_values()
